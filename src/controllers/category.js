@@ -53,12 +53,25 @@ module.exports = {
             #swagger.summary = "Get Single Category"
         */
 
-        const data = await Category.findOne({_id : req.params.id})
+        if(req.params?.id){
+           const data = await Category.findOne({_id : req.params.id}) 
 
-        res.status(200).send({
-            error: false,
-            data
-        })
+            res.status(200).send({
+                error: false,
+                data
+            })
+        }
+        else{
+            const data = await res.getModelList(Category)
+
+            res.status(200).send({
+                error: false,
+                details: await res.getModelListDetails(Category),
+                data
+            })
+        }
+
+       
 
 
 
