@@ -26,7 +26,7 @@ module.exports = {
         */
 
         // Sadece kendi kayıtlarını görebilir:
-        const customFilters = req.user?.isAdmin ? {} : { /*_id: req.user.id */}
+        const customFilters = req.user?.isAdmin ? {} : { _id: req.user._id }
 
         const data = await res.getModelList(User, customFilters)
 
@@ -60,8 +60,11 @@ module.exports = {
         req.body.isAdmin = false
 
         const data = await User.create(req.body)
+        
+        
 
         /* AUTO LOGIN */
+        // If user created an account, then he will login directly.
         const tokenData = await Token.create({
             userId: data._id,
             token: passwordEncrypt(data._id + Date.now())
@@ -117,6 +120,7 @@ module.exports = {
 
         // Yeni kayıtlarda admin/staff durumunu değiştiremez:
         if (!req.user?.isAdmin) {
+            delete req.body.isActive
             delete req.body.isStaff
             delete req.body.isAdmin
         }
